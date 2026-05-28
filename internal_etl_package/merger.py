@@ -36,11 +36,7 @@ def merge_table(
     """
     table = table_config.name
 
-    # ─── Phase 2, Step 1 of 2 ─────────────────────────────────────────────
-    # Look up the snapshot that was active just *before* this execution_date.
-    # The Ledger helper is already wired up for you (see ledger.py).
-    # 👉 TODO: replace `None` below with the correct ledger call.
-    snapshot_id = None  # TODO
+    snapshot_id = ledger.get_snapshot_before(table, execution_date)
 
     if snapshot_id is None:
         log.info(
@@ -49,13 +45,7 @@ def merge_table(
         )
     else:
         log.info(f"[{table}] Rolling back to snapshot {snapshot_id} before merge.")
-
-        # ─── Phase 2, Step 2 of 2 ─────────────────────────────────────────
-        # Restore the table to that snapshot. Notice you're talking to `engine`,
-        # not to Spark directly — so this line works the same way whether the
-        # underlying engine is Spark or any future engine (Trino, etc.).
-        # 👉 TODO: call the engine method that rolls a table back to a snapshot.
-        pass  # TODO
+        engine.rollback_to_snapshot(table, snapshot_id)
 
     # ─── Provided: the merge itself ──────────────────────────────────────
     new_snapshot_id = engine.merge(
