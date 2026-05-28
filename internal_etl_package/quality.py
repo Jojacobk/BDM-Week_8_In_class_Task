@@ -110,10 +110,10 @@ def post_audit(table_config: TableConfig, engine: TableEngine) -> None:
         send_slack_alert(
             severity="CRITICAL",
             table=table,
-            message=f"{duplicate_count} duplicate `{pk}` values detected after merge — pipeline halted",
+            message=f"{duplicate_count} duplicate keys on `{pk}` detected after merge — pipeline halted",
         )
 
         raise DataQualityError(
-            f"[{table}] Post-audit failed: {duplicate_count} duplicate `{pk}` values. "
+            f"[{table}] Post-audit failed: {duplicate_count} duplicate keys on `{pk}`. "
             "Pipeline halted to protect downstream consumers."
         )
